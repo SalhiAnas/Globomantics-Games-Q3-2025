@@ -5,9 +5,9 @@ on:
     branches: [ main ]
 
 env:
-  AZURE_WEBAPP_NAME: 'globomantics-web-game'   # set this to your application's name
-  AZURE_WEBAPP_PACKAGE_PATH: '.'      # set this to the path to your web app project, defaults to the repository root
-  DOTNET_VERSION: '5.0'           
+  AZURE_WEBAPP_NAME: 'globomantics-web-game'
+  AZURE_WEBAPP_PACKAGE_PATH: '.'
+  DOTNET_VERSION: '5.0'
 
 jobs:
   build-and-deploy:
@@ -15,14 +15,17 @@ jobs:
 
     steps:
       - uses: actions/checkout@main
-      
-      - name: 'Setup .NET Core'
+
+      - name: Install libssl
+        run: sudo apt-get update && sudo apt-get install -y libssl1.1 || sudo apt-get install -y libssl3
+
+      - name: Setup .NET Core
         uses: actions/setup-dotnet@v1
         with:
-          dotnet-version: ${{ env.DOTNET_VERSION }} 
-      
-      - name: 'Build app package'
+          dotnet-version: ${{ env.DOTNET_VERSION }}
+
+      - name: Build app package
         run: |
           dotnet restore '${{ env.AZURE_WEBAPP_PACKAGE_PATH }}/src/web-game/Globomantics.sln'
           dotnet build '${{ env.AZURE_WEBAPP_PACKAGE_PATH }}/src/web-game/Globomantics.sln' --configuration Release
-          dotnet publish '${{ env.AZURE_WEBAPP_PACKAGE_PATH }}/src/web-game/Globomantics.sln' -c Release -o '${{ env.AZURE_WEBAPP_PACKAGE_PATH }}/app-package' 
+          dotnet publish '${{ env.AZURE_WEBAPP_PACKAGE_PATH }}/src/web-game/Globomantics.sln' -c Release -o '${{ env.AZURE_WEBAPP_PACKAGE_PATH }}/app-package'
