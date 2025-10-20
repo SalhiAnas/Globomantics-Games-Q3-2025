@@ -1,0 +1,24 @@
+name: CI - Recette
+
+on:
+  pull_request:
+    branches: [ recette ]
+
+jobs:
+  qualimetry:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '5.0'
+      - run: dotnet restore ./src/web-game/Globomantics.sln
+      - run: dotnet build ./src/web-game/Globomantics.sln --configuration Release
+      - run: dotnet test ./src/web-game/Globomantics.sln --configuration Release
+      # Ajout CodeQL (analyse statique)
+      - name: Initialize CodeQL
+        uses: github/codeql-action/init@v3
+        with:
+          languages: csharp
+      - name: Perform CodeQL Analysis
+        uses: github/codeql-action/analyze@v3

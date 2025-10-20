@@ -1,0 +1,19 @@
+name: CI - Develop
+
+on:
+  push:
+    branches: [ develop ]
+
+jobs:
+  build-test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '5.0'
+      - run: dotnet restore ./src/web-game/Globomantics.sln
+      - run: dotnet build ./src/web-game/Globomantics.sln --configuration Release
+      - run: dotnet test ./src/web-game/Globomantics.sln --configuration Release
+      - name: Publish artifact
+        run: dotnet publish ./src/web-game/Globomantics.sln -c Release -o ./app-package
