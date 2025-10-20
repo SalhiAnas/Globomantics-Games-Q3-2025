@@ -1,0 +1,22 @@
+name: Release - Main
+
+on:
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  release-build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '5.0'
+      - run: dotnet restore ./src/web-game/Globomantics.sln
+      - run: dotnet build ./src/web-game/Globomantics.sln --configuration Release
+      - run: dotnet test ./src/web-game/Globomantics.sln --configuration Release
+      - name: Tag version
+        run: |
+          VERSION="v1.0.0" # à automatiser avec SemVer
+          git tag $VERSION
+          git push origin $VERSION
